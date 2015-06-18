@@ -5,14 +5,15 @@ name:                splitmix
 version:             0.1.0.0
 synopsis:            Implementation of SplitMix fast splittable random number generator
 -- description:         
-license:             GPL-2
+homepage:            https://github.com/nkartashov/splitmix
+license:             MIT
 license-file:        LICENSE
 author:              Nikita Kartashov
 maintainer:          snailandmail@gmail.com
 -- copyright:           
-category:            Data
+category:            System
 build-type:          Simple
--- extra-source-files:  
+extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
@@ -41,4 +42,3 @@ test-suite SplitMixTests
                   test-framework-quickcheck2
 
   other-modules:
-
