@@ -33,7 +33,7 @@ mixGamma gamma = if bitCount >= 24 then xor mixedGamma 0xaaaaaaaaaaaaaaaa
     bitCount = popCount $ xorShift 1 mixedGamma
 
 xorShift :: Int -> Word64 -> Word64
-xorShift bits  value = xor value $ shiftR value bits
+xorShift bits value = xor value $ shiftR value bits
 
 xorShift27 :: Word64 -> Word64
 xorShift27 = xorShift 27

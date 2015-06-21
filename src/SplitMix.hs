@@ -21,10 +21,9 @@ import Foreign.Marshal.Alloc   (allocaBytes)
 import Foreign.Marshal.Array   (peekArray)
 import System.IO        (IOMode(..), hGetBuf, withBinaryFile)
 
-data SplitMix64 = SplitMix64 {
-  seed :: Word64,
-  gamma :: Word64
-} deriving (Show, Eq)
+data SplitMix64 = SplitMix64
+  {-# UNPACK #-} !Word64
+  {-# UNPACK #-} !Word64 deriving (Show, Eq)
 
 instance  Arbitrary SplitMix64 where
   arbitrary = SplitMix64 <$> arbitrary <*> arbitrary
@@ -68,7 +67,7 @@ goldenGamma = 0x9e3779b97f4a7c15
 newSeededSplitMix64 :: Word64 -> SplitMix64
 newSeededSplitMix64 = (flip SplitMix64) goldenGamma
 
--- FIXME: portalbility, copied from mwc-random
+-- FIXME: portability, copied from mwc-random
 acquireSeedSystem :: IO [Word64]
 acquireSeedSystem = do
     let nbytes = 1024
