@@ -1,3 +1,4 @@
+{-# LANGUAGE ForeignFunctionInterface #-}
 module SplitMix.MathOperations (
   mix32
   , mix64
@@ -10,15 +11,17 @@ import Data.Int
 import Data.Word
 import Data.Bits
 
+import Foreign.C.Types (CUInt(..), CULong(..))
+
+foreign import ccall unsafe "mix32" c_mix32 :: CULong -> CUInt
+
 mix64 :: Word64 -> Word64
 mix64 = xorShift33 . secondRoundMix64 . firstRoundMix64
 firstRoundMix64 = (* 0xff51afd7ed558ccd) . xorShift33
 secondRoundMix64 = (* 0xc4ceb9fe1a85ec53) . xorShift33
 
 mix32 :: Word64 -> Word32
-mix32 = fromIntegral . ((flip shiftR) 32) . secondRoundMix32 . firstRoundMix32
-firstRoundMix32 = (* 0xff51afd7ed558ccd) . xorShift33
-secondRoundMix32 = (* 0xc4ceb9fe1a85ec53) . xorShift33
+mix32 value = let (CUInt result) = c_mix32 $ CULong value in result
 
 mix64variant13 :: Word64 -> Word64
 mix64variant13 = xorShift31 . secondRoundMix64variant13 . secondRoundMix64variant13

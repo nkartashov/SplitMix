@@ -1,8 +1,9 @@
+{-# LANGUAGE BangPatterns #-}
 module SplitMix (
   SplitMix64,
+  toSeedGamma,
   withSystemRandom,
   newSplitMix64,
-  toSeedGamma,
   nextInt32,
   nextInt64,
   ) where
@@ -10,16 +11,16 @@ module SplitMix (
 import Data.Word
 import Data.Int
 import Data.Bits
-import System.Random
+import System.Random (RandomGen, next, split)
 import SplitMix.MathOperations
 
 import Control.Applicative
 
-import Test.QuickCheck(Arbitrary(arbitrary))
+import Test.QuickCheck (Arbitrary(arbitrary))
 
-import Foreign.Marshal.Alloc   (allocaBytes)
-import Foreign.Marshal.Array   (peekArray)
-import System.IO        (IOMode(..), hGetBuf, withBinaryFile)
+import Foreign.Marshal.Alloc (allocaBytes)
+import Foreign.Marshal.Array (peekArray)
+import System.IO (IOMode(..), hGetBuf, withBinaryFile)
 
 data SplitMix64 = SplitMix64
   {-# UNPACK #-} !Word64
@@ -28,19 +29,21 @@ data SplitMix64 = SplitMix64
 instance  Arbitrary SplitMix64 where
   arbitrary = SplitMix64 <$> arbitrary <*> arbitrary
 
-toSeedGamma :: SplitMix64 -> (Word64, Word64)
-toSeedGamma (SplitMix64 seed gamma) = (seed, gamma)
-
 nextSeed :: SplitMix64 -> (Word64, SplitMix64)
 nextSeed (SplitMix64 seed gamma) = (newSeed, SplitMix64 newSeed gamma)
-  where newSeed = seed + gamma
+  where !newSeed = seed + gamma
 
 doubleUlp :: Double
 doubleUlp = 1.0 / 2097152 -- 1.0 / 1L << 53
 
+toSeedGamma :: SplitMix64 -> (Word64, Word64)
+toSeedGamma (SplitMix64 seed gamma) = (seed, gamma)
+
 nextValue :: (Word64 -> a) -> SplitMix64 -> (a, SplitMix64)
-nextValue mixer oldGen = (mixer raw64, newGen)
-  where (raw64, newGen) = nextSeed oldGen
+nextValue mixer = runFst mixer . nextSeed
+
+runFst :: (a -> b) -> (a, c) -> (b, c)
+runFst f !(a, b) = (f a, b)
 
 nextInt64 :: SplitMix64 -> (Word64, SplitMix64)
 nextInt64 = nextValue mix64
