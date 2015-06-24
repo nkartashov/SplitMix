@@ -2,7 +2,6 @@
 module SplitMix.MathOperations (
   mix32
   , mix64
-  , mix64variant13
   , mixGamma
   , xorShift33
   ,) where
@@ -14,38 +13,20 @@ import Data.Bits
 import Foreign.C.Types (CUInt(..), CULong(..))
 
 foreign import ccall unsafe "mix32" c_mix32 :: CULong -> CUInt
+foreign import ccall unsafe "mix64" c_mix64 :: CULong -> CULong
+foreign import ccall unsafe "mix_gamma" c_mixGamma :: CULong -> CULong
 
 mix64 :: Word64 -> Word64
-mix64 = xorShift33 . secondRoundMix64 . firstRoundMix64
-firstRoundMix64 = (* 0xff51afd7ed558ccd) . xorShift33
-secondRoundMix64 = (* 0xc4ceb9fe1a85ec53) . xorShift33
+mix64 value = let (CULong result) = c_mix64 $ CULong value in result
 
 mix32 :: Word64 -> Word32
 mix32 value = let (CUInt result) = c_mix32 $ CULong value in result
 
-mix64variant13 :: Word64 -> Word64
-mix64variant13 = xorShift31 . secondRoundMix64variant13 . secondRoundMix64variant13
-firstRoundMix64variant13 = (* 0xbf58476d1ce4e5b9) . xorShift30
-secondRoundMix64variant13 = (* 0x94d049bb133111eb) . xorShift27
-
 mixGamma :: Word64 -> Word64
-mixGamma gamma = if bitCount >= 24 then xor mixedGamma 0xaaaaaaaaaaaaaaaa
-                                   else mixedGamma
-  where
-    mixedGamma = (mix64variant13 gamma) .|. 1
-    bitCount = popCount $ xorShift 1 mixedGamma
+mixGamma gamma = let (CULong result) = c_mixGamma $ CULong gamma in result
 
 xorShift :: Int -> Word64 -> Word64
 xorShift bits value = xor value $ shiftR value bits
-
-xorShift27 :: Word64 -> Word64
-xorShift27 = xorShift 27
-
-xorShift30 :: Word64 -> Word64
-xorShift30 = xorShift 30
-
-xorShift31 :: Word64 -> Word64
-xorShift31 = xorShift 31
 
 xorShift33 :: Word64 -> Word64
 xorShift33 = xorShift 33

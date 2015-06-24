@@ -61,8 +61,8 @@ nextDouble gen = (doubleUlp * fromIntegral (shiftR int64 11), newGen)
 splitGen :: SplitMix64 -> (SplitMix64, SplitMix64)
 splitGen oldGen = (updatedGen', SplitMix64 (mix64 newSeed) (mixGamma newGamma))
   where
-    (newSeed, updatedGen) = nextSeed oldGen
-    (newGamma, updatedGen') = nextSeed updatedGen
+    !(newSeed, updatedGen) = nextSeed oldGen
+    !(newGamma, updatedGen') = nextSeed updatedGen
 
 goldenGamma :: Word64
 goldenGamma = 0x9e3779b97f4a7c15
