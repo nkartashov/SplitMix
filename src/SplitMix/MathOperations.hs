@@ -12,18 +12,18 @@ import Data.Bits
 
 import Foreign.C.Types (CUInt(..), CULong(..))
 
-foreign import ccall unsafe "mix32" c_mix32 :: CULong -> CUInt
-foreign import ccall unsafe "mix64" c_mix64 :: CULong -> CULong
-foreign import ccall unsafe "mix_gamma" c_mixGamma :: CULong -> CULong
+foreign import ccall unsafe "mix32" c_mix32 :: Word64 -> Word32
+foreign import ccall unsafe "mix64" c_mix64 :: Word64 -> Word64
+foreign import ccall unsafe "mix_gamma" c_mixGamma :: Word64 -> Word64
 
 mix64 :: Word64 -> Word64
-mix64 value = let (CULong result) = c_mix64 $ CULong value in result
+mix64 = c_mix64
 
 mix32 :: Word64 -> Word32
-mix32 value = let (CUInt result) = c_mix32 $ CULong value in result
+mix32 = c_mix32
 
 mixGamma :: Word64 -> Word64
-mixGamma gamma = let (CULong result) = c_mixGamma $ CULong gamma in result
+mixGamma = c_mixGamma
 
 xorShift :: Int -> Word64 -> Word64
 xorShift bits value = xor value $ shiftR value bits
