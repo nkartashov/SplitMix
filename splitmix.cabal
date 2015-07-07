@@ -19,13 +19,12 @@ cabal-version:       >=1.10
 library
   exposed-modules:     SplitMix
                        SplitMix.MathOperations
+                       SplitMix.Gen
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >= 4.7 && < 4.8,
                        random >= 1.0.1.1,
-                       QuickCheck,
-                       test-framework,
-                       test-framework-quickcheck2
+                       QuickCheck
 
   hs-source-dirs:      src
   default-language:    Haskell2010

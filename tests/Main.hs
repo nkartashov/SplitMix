@@ -6,7 +6,7 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 import Data.Word
 import Data.Bits
 
-import SplitMix
+import SplitMix.Gen
 import SplitMix.MathOperations
 
 prop_xorShift33SelfInvertible i = i == (xorShift33 $ xorShift33 i)
@@ -25,6 +25,12 @@ prop_seedGammaPreservation gen = seed == unmix64 q && gamma == (unmix64 q - unmi
     (q, newGen') = nextInt64 newGen
     (seed, gamma) = toSeedGamma newGen'
 
+prop_resultOfMixGammaShouldAlwaysBeOdd :: Word64 -> Bool
+prop_resultOfMixGammaShouldAlwaysBeOdd = odd . mixGamma
+
+prop_gammaIsAlwaysOdd :: SplitMix64 -> Bool
+prop_gammaIsAlwaysOdd = odd . snd . toSeedGamma
+
 
 main :: IO ()
 main = defaultMain allTests
@@ -37,4 +43,6 @@ mathOperationTests = testGroup "MathOperations"
   testProperty "unmix64 inverts mix64 and commutes with it" prop_mix64unmix64InvertibleCommutative]
 
 splitMixOperationsTests = testGroup "SplitMix operations"
-  [testProperty "seedAndGamma should be preserved after nextInt64 calls" prop_seedGammaPreservation]
+  [testProperty "seedAndGamma should be preserved after nextInt64 calls" prop_seedGammaPreservation,
+  testProperty "mixGamma function should always return odd gammas" prop_resultOfMixGammaShouldAlwaysBeOdd,
+  testProperty "gamma should always be odd" prop_gammaIsAlwaysOdd]
