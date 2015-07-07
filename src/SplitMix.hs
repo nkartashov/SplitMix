@@ -1,7 +1,5 @@
 module SplitMix (
-  module SplitMix.Gen,
-  module SplitMix.Instances
+  module SplitMix.Gen
   ) where
 
 import SplitMix.Gen
-import SplitMix.Instances
