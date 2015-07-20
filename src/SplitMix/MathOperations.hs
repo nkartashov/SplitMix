@@ -10,8 +10,6 @@ import Data.Int
 import Data.Word
 import Data.Bits
 
-import Foreign.C.Types (CUInt(..), CULong(..))
-
 foreign import ccall unsafe "mix32" c_mix32 :: Word64 -> Word32
 foreign import ccall unsafe "mix64" c_mix64 :: Word64 -> Word64
 foreign import ccall unsafe "mix_gamma" c_mixGamma :: Word64 -> Word64
