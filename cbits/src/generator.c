@@ -1,10 +1,13 @@
 #include "generator.h"
 
-void advance(struct SplitMix64* generator) {
+inline void advance(struct SplitMix64* generator);
+inline uint64_t next_seed(struct SplitMix64* generator);
+
+inline void advance(struct SplitMix64* generator) {
   generator->seed += generator->gamma;
 }
 
-uint64_t next_seed(struct SplitMix64* generator) {
+inline uint64_t next_seed(struct SplitMix64* generator) {
   uint64_t result = generator->seed;
   advance(generator);
   return result;

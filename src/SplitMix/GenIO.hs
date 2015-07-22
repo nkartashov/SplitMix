@@ -9,6 +9,7 @@ import Data.Word (Word32, Word64)
 import Foreign.Ptr (Ptr)
 import Data.Bits (rotateR)
 import Foreign.Marshal.Utils (new)
+import Foreign.Marshal.Alloc (free)
 
 import SplitMix.Gen (SplitMix64(..), newSplitMix64, newSeededSplitMix64)
 import SplitMix.Utils (goldenGamma, acquireSeedSystem)
@@ -34,6 +35,9 @@ foreign import ccall unsafe "next_bounded_int64"
 newSplitMixGen :: IO SplitMixGen
 newSplitMixGen = fmap SplitMixGen $ newSplitMix64 >>= new
 
+deleteSplitMixGen :: SplitMixGen -> IO ()
+deleteSplitMixGen (SplitMixGen ptr) = free ptr
+
 newSeededSplitMixGen :: Word64 -> IO SplitMixGen
 newSeededSplitMixGen seed = fmap SplitMixGen $ new $ newSeededSplitMix64 seed
 
@@ -44,8 +48,11 @@ class Variate a where
 
 instance Generator SplitMixGen IO where
   uniform1 f (SplitMixGen p) = f <$> c_nextInt32 p
+  {-# INLINE uniform1 #-}
   uniform2 f (SplitMixGen p) = f <$> c_nextInt64 p
+  {-# INLINE uniform2 #-}
   uniform1B f b (SplitMixGen p) = f <$> c_nextBoundedInt64 p b
+  {-# INLINE uniform1B #-}
 
 instance Variate Int32 where
   uniform = uniform1 fromIntegral
@@ -54,5 +61,7 @@ instance Variate Int32 where
 
 instance Variate Int where
   uniform = uniform1 fromIntegral
+  {-# INLINE uniform #-}
   uniformR = undefined
   uniformB b = uniform1B fromIntegral (fromIntegral b)
+  {-# INLINE uniformB #-}
