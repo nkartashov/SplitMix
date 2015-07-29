@@ -17,16 +17,17 @@ extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
-  exposed-modules:     SplitMix
-                       SplitMix.MathOperations
-                       SplitMix.Gen,
-                       SplitMix.GenIO,
-                       SplitMix.StorableGen,
-                       SplitMix.Utils
+  exposed-modules:     System.Random.SplitMix
+                       System.Random.SplitMix.MathOperations
+                       System.Random.SplitMix.Gen,
+                       System.Random.SplitMix.GenIO,
+                       System.Random.SplitMix.StorableGen,
+                       System.Random.SplitMix.Utils
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >= 4.7 && < 4.8,
                        random >= 1.0.1.1,
+                       time >= 1.4.2,
                        QuickCheck
 
   hs-source-dirs:      src

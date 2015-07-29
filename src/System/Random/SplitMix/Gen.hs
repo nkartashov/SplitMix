@@ -1,5 +1,5 @@
 {-# LANGUAGE BangPatterns #-}
-module SplitMix.Gen (
+module System.Random.SplitMix.Gen (
   SplitMix64(..),
   toSeedGamma,
   withSystemRandom,
@@ -17,8 +17,8 @@ import Control.Applicative
 
 import Test.QuickCheck (Arbitrary(arbitrary))
 
-import SplitMix.MathOperations
-import SplitMix.Utils (goldenGamma, acquireSeedSystem)
+import System.Random.SplitMix.MathOperations
+import System.Random.SplitMix.Utils (goldenGamma, acquireSeedSystem)
 
 
 data SplitMix64 = SplitMix64

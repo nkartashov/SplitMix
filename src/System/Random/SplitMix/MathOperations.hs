@@ -1,5 +1,5 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
-module SplitMix.MathOperations (
+module System.Random.SplitMix.MathOperations (
   mix32
   , mix64
   , mixGamma

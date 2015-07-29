@@ -1,9 +1,9 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE CPP                      #-}
-module SplitMix.StorableGen where
+module System.Random.SplitMix.StorableGen where
 
 import Foreign.Storable
-import SplitMix.Gen (SplitMix64(..))
+import System.Random.SplitMix.Gen (SplitMix64(..))
 
 #include "generator.h"
 
