@@ -3,11 +3,10 @@ module Main where
 import Test.Framework (defaultMain, testGroup, Test)
 import Test.Framework.Providers.QuickCheck2 (testProperty)
 
-import Data.Word
-import Data.Bits
+import Data.Word (Word64)
 
-import SplitMix.Gen
-import SplitMix.MathOperations
+import System.Random.SplitMix.Gen
+import System.Random.SplitMix.MathOperations
 
 prop_xorShift33SelfInvertible i = i == (xorShift33 $ xorShift33 i)
 

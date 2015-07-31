@@ -13,19 +13,19 @@ import Data.Word
 import Data.Int
 import Data.Bits
 import System.Random (RandomGen, next, split)
-import Control.Applicative
+import Control.Applicative ((<$>), (<*>))
+import Control.Arrow (first)
 
 import Test.QuickCheck (Arbitrary(arbitrary))
 
 import System.Random.SplitMix.MathOperations
 import System.Random.SplitMix.Utils (goldenGamma, acquireSeedSystem)
 
-
 data SplitMix64 = SplitMix64
   {-# UNPACK #-} !Word64
   {-# UNPACK #-} !Word64 deriving (Show, Eq)
 
-instance  Arbitrary SplitMix64 where
+instance Arbitrary SplitMix64 where
   arbitrary = SplitMix64 <$> arbitrary <*> (fmap makeGammaOdd arbitrary)
 
 makeGammaOdd :: Word64 -> Word64
@@ -43,10 +43,7 @@ toSeedGamma :: SplitMix64 -> (Word64, Word64)
 toSeedGamma (SplitMix64 seed gamma) = (seed, gamma)
 
 nextValue :: (Word64 -> a) -> SplitMix64 -> (a, SplitMix64)
-nextValue mixer = runFst mixer . nextSeed
-
-runFst :: (a -> b) -> (a, c) -> (b, c)
-runFst f (!a, b) = (f a, b)
+nextValue mixer = first mixer . nextSeed
 
 nextInt64 :: SplitMix64 -> (Word64, SplitMix64)
 nextInt64 = nextValue mix64
