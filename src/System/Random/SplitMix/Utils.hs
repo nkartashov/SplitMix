@@ -42,7 +42,7 @@ devRandom = allocaBytes 8 $ \buf -> do
               peek buf
 
 -- | Get a random number from system source. If \"@\/dev\/urandom@\" is
---   not found return inferior random number from time.
+--   not found return inferior random number from system clock
 acquireSeedSystem :: IO Word64
 acquireSeedSystem =
   devRandom `E.catch` \(_ :: E.IOException) -> do

@@ -1,6 +1,11 @@
 {-# LANGUAGE ForeignFunctionInterface #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-module System.Random.SplitMix.GenIO where
+module System.Random.SplitMix.GenIO
+ ( SplitMixGen
+ , newSplitMixGen
+ , deleteSplitMixGen
+ , newSeededSplitMix64
+ ) where
 
 import Control.Monad (Monad)
 import Control.Applicative ((<$>))
@@ -13,38 +18,39 @@ import Foreign.Marshal.Alloc (free)
 
 import System.Random.SplitMix.Gen (SplitMix64(..), newSplitMix64, newSeededSplitMix64)
 import System.Random.SplitMix.Utils (goldenGamma, acquireSeedSystem)
-import System.Random.SplitMix.StorableGen
+import System.Random.SplitMix.StorableGen ()
+import System.Random.SplitMix.Generator (Generator(..))
+import System.Random.SplitMix.Variate (Variate(..))
 
+-- |  Wrapper for SplitMix64 structure for using it with C
 newtype SplitMixGen = SplitMixGen (Ptr SplitMix64) deriving (Eq, Show)
 
--- NOTE: borrowed from pcg-random
-class Monad m => Generator g m where
-  uniform1 :: (Word32 -> a) -> g -> m a
-  uniform2 :: (Word64 -> a) -> g -> m a
-  uniform1B :: Integral a => (Word64 -> a) -> Word64 -> g -> m a
-
+-- | Gets as new randomly distributed Word32 value
 foreign import ccall unsafe "next_int32"
   c_nextInt32 :: Ptr SplitMix64 -> IO Word32
 
+-- | Gets as new randomly distributed Word64 value
 foreign import ccall unsafe "next_int64"
   c_nextInt64 :: Ptr SplitMix64 -> IO Word64
 
+-- | Gets as new randomly distributed Word64 value from the interval
+-- [0, bound]
 foreign import ccall unsafe "next_bounded_int64"
   c_nextBoundedInt64 :: Ptr SplitMix64 -> Word64 -> IO Word64
 
+-- | Allocates a new instance of SplitMix64 generator
 newSplitMixGen :: IO SplitMixGen
 newSplitMixGen = fmap SplitMixGen $ newSplitMix64 >>= new
 
+-- | Deallocates an instance of SplitMix64 generator
 deleteSplitMixGen :: SplitMixGen -> IO ()
 deleteSplitMixGen (SplitMixGen ptr) = free ptr
 
+-- | Seeds a newly allocated SplitMix64 generator instance with a provided
+-- 64 bit value
 newSeededSplitMixGen :: Word64 -> IO SplitMixGen
 newSeededSplitMixGen seed = fmap SplitMixGen $ new $ newSeededSplitMix64 seed
 
-class Variate a where
-  uniform  :: Generator g m => g -> m a
-  uniformR :: Generator g m => (a, a) -> g -> m a
-  uniformB :: Generator g m => a -> g -> m a
 
 instance Generator SplitMixGen IO where
   uniform1 f (SplitMixGen p) = f <$> c_nextInt32 p
@@ -54,6 +60,8 @@ instance Generator SplitMixGen IO where
   uniform1B f b (SplitMixGen p) = f <$> c_nextBoundedInt64 p b
   {-# INLINE uniform1B #-}
 
+-- NOTE: borrowed from pcg-random
+-- | Produces a value in range given a generator for them
 uniformRange :: (Generator g m, Integral a, Bounded a, Variate a)
              => (a,a) -> g -> m a
 uniformRange (x1,x2) g

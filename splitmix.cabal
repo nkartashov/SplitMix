@@ -22,7 +22,10 @@ library
                        System.Random.SplitMix.Gen,
                        System.Random.SplitMix.GenIO,
                        System.Random.SplitMix.StorableGen,
-                       System.Random.SplitMix.Utils
+                       System.Random.SplitMix.Utils,
+                       System.Random.SplitMix.Generator,
+                       System.Random.SplitMix.Variate
+
   -- other-modules:       
   -- other-extensions:    
   build-depends:       base >= 4.7 && < 4.8,

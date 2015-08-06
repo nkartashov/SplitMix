@@ -6,7 +6,7 @@ import Test.Framework.Providers.QuickCheck2 (testProperty)
 import Data.Word (Word64)
 
 import System.Random.SplitMix.Gen
-import System.Random.SplitMix.MathOperations
+import System.Random.SplitMix.MathOperations (c_mix64, c_mixGamma, xorShift33)
 
 prop_xorShift33SelfInvertible i = i == (xorShift33 $ xorShift33 i)
 
@@ -15,7 +15,7 @@ unmix64 = xorShift33 . secondRoundUnmix64 . firstRoundUnmix64
 firstRoundUnmix64 = (* 0x9cb4b2f8129337db) . xorShift33
 secondRoundUnmix64 = (* 0x4f74430c22a54005) . xorShift33
 
-prop_mix64unmix64InvertibleCommutative i = (mix64 $ unmix64 i) == (unmix64 $ mix64 i)
+prop_mix64unmix64InvertibleCommutative i = (c_mix64 $ unmix64 i) == (unmix64 $ c_mix64 i)
 
 prop_seedGammaPreservation :: SplitMix64 -> Bool
 prop_seedGammaPreservation gen = seed == unmix64 q && gamma == (unmix64 q - unmix64 p)
@@ -25,7 +25,7 @@ prop_seedGammaPreservation gen = seed == unmix64 q && gamma == (unmix64 q - unmi
     (seed, gamma) = toSeedGamma newGen'
 
 prop_resultOfMixGammaShouldAlwaysBeOdd :: Word64 -> Bool
-prop_resultOfMixGammaShouldAlwaysBeOdd = odd . mixGamma
+prop_resultOfMixGammaShouldAlwaysBeOdd = odd . c_mixGamma
 
 prop_gammaIsAlwaysOdd :: SplitMix64 -> Bool
 prop_gammaIsAlwaysOdd = odd . snd . toSeedGamma
