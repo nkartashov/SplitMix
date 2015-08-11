@@ -4,7 +4,7 @@ module System.Random.SplitMix.GenIO
  ( SplitMixGen
  , newSplitMixGen
  , deleteSplitMixGen
- , newSeededSplitMix64
+ , newSeededSplitMixGen
  ) where
 
 import Control.Monad (Monad)
