@@ -3,8 +3,14 @@
 
 name:                splitmix
 version:             0.1.0.0
-synopsis:            Implementation of SplitMix fast splittable random number generator
--- description:         
+synopsis:            Implementation of SplitMix fast splittable pseudo random number generator.
+description:         
+  SplitMix is a fast splittable pseudo random number generator described in the paper
+  "Fast Splittable Pseudorandom Number Generators" by Guy L. Steele Jr., Doug Lea, Christine H. Flood.
+
+  The following package includes two implementations of SplitMix, pure and inside an IO monad.
+  Both implementations use FFI to perform computations in C.
+
 homepage:            https://github.com/nkartashov/splitmix
 license:             MIT
 license-file:        LICENSE
@@ -16,17 +22,20 @@ build-type:          Simple
 extra-source-files:  README.md
 cabal-version:       >=1.10
 
+source-repository head
+    type:     git
+    location: git://github.com/nkartashov/splitmix
+
 library
   exposed-modules:     System.Random.SplitMix
-                       System.Random.SplitMix.MathOperations
+                       System.Random.SplitMix.Generator,
+                       System.Random.SplitMix.Variate,
                        System.Random.SplitMix.Gen,
                        System.Random.SplitMix.GenIO,
+                       System.Random.SplitMix.MathOperations
                        System.Random.SplitMix.StorableGen,
-                       System.Random.SplitMix.Utils,
-                       System.Random.SplitMix.Generator,
-                       System.Random.SplitMix.Variate
-
-  -- other-modules:       
+                       System.Random.SplitMix.Utils
+  --other-modules:         
   -- other-extensions:    
   build-depends:       base >= 4.7 && < 4.8,
                        random >= 1.0.1.1,
