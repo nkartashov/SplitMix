@@ -7,12 +7,10 @@ module System.Random.SplitMix.GenIO
  , newSeededSplitMixGen
  ) where
 
-import Control.Monad (Monad)
 import Control.Applicative ((<$>))
 import Data.Int (Int8, Int16, Int32, Int64)
 import Data.Word (Word8, Word16, Word32, Word64)
 import Foreign.Ptr (Ptr)
-import Data.Bits (rotateR)
 import Foreign.Marshal.Utils (new)
 import Foreign.Marshal.Alloc (free)
 
@@ -50,7 +48,6 @@ deleteSplitMixGen (SplitMixGen ptr) = free ptr
 -- 64 bit value
 newSeededSplitMixGen :: Word64 -> IO SplitMixGen
 newSeededSplitMixGen seed = fmap SplitMixGen $ new $ newSeededSplitMix64 seed
-
 
 instance Generator SplitMixGen IO where
   uniform1 f (SplitMixGen p) = f <$> c_nextInt32 p

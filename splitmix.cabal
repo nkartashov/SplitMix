@@ -35,7 +35,7 @@ library
                        System.Random.SplitMix.MathOperations
                        System.Random.SplitMix.StorableGen,
                        System.Random.SplitMix.Utils
-  --other-modules:         
+  -- other-modules:         
   -- other-extensions:    
   build-depends:       base >= 4.7 && < 4.8,
                        random >= 1.0.1.1,
